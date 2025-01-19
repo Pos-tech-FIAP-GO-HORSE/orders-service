@@ -2,6 +2,7 @@ package mongodb_repository
 
 import (
 	"context"
+	"time"
 
 	"github.com/Pos-tech-FIAP-GO-HORSE/orders-service/src/core/domain/entity"
 	"github.com/Pos-tech-FIAP-GO-HORSE/orders-service/src/infra/repository"
@@ -21,6 +22,10 @@ func NewOrderRepository(collection *mongo.Collection) repository.IOrderRepositor
 
 func (ref *OrderRepository) Create(ctx context.Context, order entity.Order) (*entity.Order, error) {
 	record := models.OrderFromDomain(order)
+
+	now := time.Now()
+	record.CreatedAt = now
+	record.UpdatedAt = now
 
 	result, err := ref.collection.InsertOne(ctx, record)
 	if err != nil {
@@ -79,6 +84,7 @@ func (ref *OrderRepository) UpdateByID(ctx context.Context, id string, order ent
 	}
 
 	record := models.OrderFromDomain(order)
+	record.UpdatedAt = time.Now()
 
 	_, err = ref.collection.UpdateByID(ctx, objectID, record)
 	if err != nil {
