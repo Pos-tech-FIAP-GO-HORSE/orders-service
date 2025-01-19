@@ -18,8 +18,13 @@ type Order struct {
 }
 
 type Item struct {
-	Product
-	Comments string `bson:"comments"`
+	ID              string  `bson:"id"`
+	Name            string  `bson:"name,omitempty"`
+	ImageURL        string  `bson:"imageUrl,omitempty"`
+	Price           float64 `bson:"price,omitempty"`
+	Quantity        int64   `bson:"quantity"`
+	PreparationTime int64   `bson:"preparationTime,omitempty"`
+	Comments        string  `bson:"comments,omitempty"`
 }
 
 func OrderFromDomain(order entity.Order) Order {
@@ -40,27 +45,25 @@ func OrderFromDomain(order entity.Order) Order {
 
 func ItemFromDomain(item entity.Item) Item {
 	return Item{
-		Product: Product{
-			ID:              item.ID,
-			Name:            item.Name,
-			ImageUrl:        item.ImageUrl,
-			Price:           item.Price,
-			PreparationTime: item.PreparationTime,
-		},
-		Comments: item.Comments,
+		ID:              item.ID,
+		Name:            item.Name,
+		ImageURL:        item.ImageURL,
+		Price:           item.Price,
+		PreparationTime: item.PreparationTime,
+		Quantity:        item.Quantity,
+		Comments:        item.Comments,
 	}
 }
 
 func (ref Item) ToDomain() entity.Item {
 	return entity.Item{
-		Product: entity.Product{
-			ID:              ref.ID,
-			Name:            ref.Name,
-			ImageUrl:        ref.ImageUrl,
-			Price:           ref.Price,
-			PreparationTime: ref.PreparationTime,
-		},
-		Comments: ref.Comments,
+		ID:              ref.ID,
+		Name:            ref.Name,
+		ImageURL:        ref.ImageURL,
+		Price:           ref.Price,
+		PreparationTime: ref.PreparationTime,
+		Quantity:        ref.Quantity,
+		Comments:        ref.Comments,
 	}
 }
 

@@ -17,6 +17,11 @@ type Order struct {
 }
 
 type Item struct {
-	Product
-	Comments string
+	ID              string
+	Name            string
+	ImageURL        string
+	Price           float64
+	PreparationTime int64
+	Quantity        int64
+	Comments        string
 }
