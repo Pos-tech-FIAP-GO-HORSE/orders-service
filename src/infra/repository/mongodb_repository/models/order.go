@@ -9,10 +9,10 @@ import (
 
 type Order struct {
 	ID                       string    `bson:"_id,omitempty"`
-	Items                    []Item    `bson:"items"`
-	TotalPrice               float64   `bson:"totalPrice"`
-	Status                   string    `bson:"status"`
-	EstimatedPreparationTime int64     `bson:"estimatedPreparationTime"`
+	Items                    []Item    `bson:"items,omitempty"`
+	TotalPrice               float64   `bson:"totalPrice,omitempty"`
+	Status                   string    `bson:"status,omitempty"`
+	EstimatedPreparationTime int64     `bson:"estimatedPreparationTime,omitempty"`
 	CreatedAt                time.Time `bson:"createdAt"`
 	UpdatedAt                time.Time `bson:"updatedAt"`
 }

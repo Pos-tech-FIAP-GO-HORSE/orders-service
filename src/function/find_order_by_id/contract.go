@@ -6,11 +6,7 @@ import (
 	"github.com/Pos-tech-FIAP-GO-HORSE/orders-service/src/core/domain/entity"
 )
 
-type CreateOrderRequest struct {
-	Items []Item `json:"items"`
-}
-
-type CreateOrderResponse struct {
+type Order struct {
 	ID                       string    `json:"id"`
 	Items                    []Item    `json:"items"`
 	TotalPrice               float64   `json:"totalPrice"`
@@ -30,18 +26,6 @@ type Item struct {
 	Comments        string  `json:"comments"`
 }
 
-func (ref CreateOrderRequest) ToDomain() entity.Order {
-	items := make([]entity.Item, len(ref.Items))
-
-	for i, item := range ref.Items {
-		items[i] = item.ToDomain()
-	}
-
-	return entity.Order{
-		Items: items,
-	}
-}
-
 func (ref Item) ToDomain() entity.Item {
 	return entity.Item{
 		ID:              ref.ID,
@@ -54,14 +38,14 @@ func (ref Item) ToDomain() entity.Item {
 	}
 }
 
-func CreateOrderResponseFromDomain(order *entity.Order) CreateOrderResponse {
+func OrderFromDomain(order entity.Order) Order {
 	items := make([]Item, len(order.Items))
 
 	for i, item := range order.Items {
 		items[i] = ItemFromDomain(item)
 	}
 
-	return CreateOrderResponse{
+	return Order{
 		ID:                       order.ID,
 		Items:                    items,
 		TotalPrice:               order.TotalPrice,
