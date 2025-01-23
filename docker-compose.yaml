@@ -11,6 +11,18 @@ services:
     networks:
       - tech-challenge
 
+  localstack:
+    container_name: local-aws-services
+    image: localstack/localstack:latest
+    environment:
+      - SERVICES=sns
+      - AWS_DEFAULT_REGION=us-east-1
+      - EDGE_PORT=4566
+    ports:
+      - "4566-4597:4566-4597"
+    volumes:
+      - "./.localstack:/var/lib/localstack"
+
 volumes:
   mongo_data: {}
 

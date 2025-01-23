@@ -7,13 +7,13 @@ import (
 )
 
 type Order struct {
-	ID                       string
-	Items                    []Item
-	TotalPrice               float64
-	Status                   values.OrderStatusType
-	EstimatedPreparationTime int64
-	CreatedAt                time.Time
-	UpdatedAt                time.Time
+	ID                       string                 `json:"id"`
+	Items                    []Item                 `json:"items"`
+	TotalPrice               float64                `json:"totalPrice"`
+	Status                   values.OrderStatusType `json:"status"`
+	EstimatedPreparationTime int64                  `json:"estimatedPreparationTime"`
+	CreatedAt                time.Time              `json:"createdAt"`
+	UpdatedAt                time.Time              `json:"updatedAt"`
 }
 
 type Item struct {
