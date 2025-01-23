@@ -21,7 +21,14 @@ func (ref *OrderService) Create(ctx context.Context, order entity.Order) (*entit
 	order.EstimatedPreparationTime = ref.getEstimatedPreparationTime(order.Items)
 	order.Status = values.TypeAwaitingPayment
 
-	return ref.orderRepository.Create(ctx, order)
+	createdOrder, err := ref.orderRepository.Create(ctx, order)
+	if err != nil {
+		return nil, err
+	}
+
+	// Publicar mensagem no SQS
+
+	return createdOrder, nil
 }
 
 func (ref *OrderService) Find(ctx context.Context) ([]*entity.Order, error) {
@@ -33,7 +40,28 @@ func (ref *OrderService) FindByID(ctx context.Context, id string) (*entity.Order
 }
 
 func (ref *OrderService) UpdateByID(ctx context.Context, id string, order entity.Order) (*entity.Order, error) {
-	return ref.orderRepository.UpdateByID(ctx, id, order)
+	order.TotalPrice = ref.getTotalPrice(order.Items)
+	order.EstimatedPreparationTime = ref.getEstimatedPreparationTime(order.Items)
+
+	updatedOrder, err := ref.orderRepository.UpdateByID(ctx, id, order)
+	if err != nil {
+		return nil, err
+	}
+
+	// Publicar mensagem no SQS
+
+	return updatedOrder, nil
+}
+
+func (ref *OrderService) UpdateStatusByID(ctx context.Context, id, status string) (*entity.Order, error) {
+	updatedOrder, err := ref.orderRepository.UpdateStatusByID(ctx, id, status)
+	if err != nil {
+		return nil, err
+	}
+
+	// Publicar mensagem no SQS
+
+	return updatedOrder, nil
 }
 
 func (ref *OrderService) getTotalPrice(items []entity.Item) float64 {

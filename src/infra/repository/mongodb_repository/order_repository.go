@@ -93,3 +93,24 @@ func (ref *OrderRepository) UpdateByID(ctx context.Context, id string, order ent
 
 	return ref.FindByID(ctx, id)
 }
+
+func (ref *OrderRepository) UpdateStatusByID(ctx context.Context, id string, status string) (*entity.Order, error) {
+	objectID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return nil, err
+	}
+
+	update := bson.M{
+		"$set": bson.M{
+			"status":    status,
+			"updatedAt": time.Now(),
+		},
+	}
+
+	_, err = ref.collection.UpdateByID(ctx, objectID, update)
+	if err != nil {
+		return nil, err
+	}
+
+	return ref.FindByID(ctx, id)
+}

@@ -11,6 +11,7 @@ type IOrderRepository interface {
 	Find(ctx context.Context) ([]*entity.Order, error)
 	FindByID(ctx context.Context, id string) (*entity.Order, error)
 	UpdateByID(ctx context.Context, id string, order entity.Order) (*entity.Order, error)
+	UpdateStatusByID(ctx context.Context, id, status string) (*entity.Order, error)
 }
 
 type IProductRepository interface {
