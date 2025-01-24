@@ -6,8 +6,10 @@ import (
 	"time"
 
 	"github.com/Pos-tech-FIAP-GO-HORSE/orders-service/src/core/service/order_service"
+	"github.com/Pos-tech-FIAP-GO-HORSE/orders-service/src/infra/message_broker/sns_message_broker"
 	"github.com/Pos-tech-FIAP-GO-HORSE/orders-service/src/infra/repository/mongodb_repository"
 	"github.com/aws/aws-lambda-go/lambda"
+	"github.com/aws/aws-sdk-go-v2/service/sns"
 	_ "github.com/joho/godotenv/autoload"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -27,16 +29,18 @@ func main() {
 	defer cancel()
 
 	clientOptions := options.Client().ApplyURI(os.Getenv("DB_URI"))
-	client, err := mongo.Connect(ctx, clientOptions)
+	dbClient, err := mongo.Connect(ctx, clientOptions)
 	if err != nil {
 		zap.L().Fatal("unable to connect on database", zap.Error(err))
 	}
 
-	database := client.Database(os.Getenv("DB_NAME"))
+	database := dbClient.Database(os.Getenv("DB_NAME"))
 	ordersCollection := database.Collection("orders")
 
+	snsClient := sns_message_broker.NewSNSMessageBroker(sns.New(sns.Options{})) // TODO: adicionar options
+
 	orderRepository := mongodb_repository.NewOrderRepository(ordersCollection)
-	orderService := order_service.NewOrderService(orderRepository)
+	orderService := order_service.NewOrderService(orderRepository, snsClient)
 	handler := NewHandler(orderService)
 
 	lambda.Start(handler.Handle)

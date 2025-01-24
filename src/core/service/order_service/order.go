@@ -2,18 +2,24 @@ package order_service
 
 import (
 	"context"
+	"encoding/json"
 
 	"github.com/Pos-tech-FIAP-GO-HORSE/orders-service/src/core/domain/entity"
 	values "github.com/Pos-tech-FIAP-GO-HORSE/orders-service/src/core/domain/value_object"
+	"github.com/Pos-tech-FIAP-GO-HORSE/orders-service/src/infra/message_broker"
 	"github.com/Pos-tech-FIAP-GO-HORSE/orders-service/src/infra/repository"
 )
 
 type OrderService struct {
 	orderRepository repository.IOrderRepository
+	messageBroker   message_broker.IMessageBroker
 }
 
-func NewOrderService(orderRepository repository.IOrderRepository) IOrderService {
-	return &OrderService{orderRepository}
+func NewOrderService(orderRepository repository.IOrderRepository, messageBroker message_broker.IMessageBroker) IOrderService {
+	return &OrderService{
+		orderRepository,
+		messageBroker,
+	}
 }
 
 func (ref *OrderService) Create(ctx context.Context, order entity.Order) (*entity.Order, error) {
@@ -26,7 +32,10 @@ func (ref *OrderService) Create(ctx context.Context, order entity.Order) (*entit
 		return nil, err
 	}
 
-	// Publicar mensagem no SQS
+	messageRaw, _ := json.Marshal(createdOrder)
+	if err = ref.messageBroker.Publish(ctx, "", string(messageRaw)); err != nil { // TODO: adicionar nome do tópico
+		return nil, err
+	}
 
 	return createdOrder, nil
 }
@@ -48,7 +57,10 @@ func (ref *OrderService) UpdateByID(ctx context.Context, id string, order entity
 		return nil, err
 	}
 
-	// Publicar mensagem no SQS
+	messageRaw, _ := json.Marshal(updatedOrder)
+	if err = ref.messageBroker.Publish(ctx, "", string(messageRaw)); err != nil { // TODO: adicionar nome do tópico
+		return nil, err
+	}
 
 	return updatedOrder, nil
 }
@@ -59,7 +71,10 @@ func (ref *OrderService) UpdateStatusByID(ctx context.Context, id, status string
 		return nil, err
 	}
 
-	// Publicar mensagem no SQS
+	messageRaw, _ := json.Marshal(updatedOrder)
+	if err = ref.messageBroker.Publish(ctx, "", string(messageRaw)); err != nil { // TODO: adicionar nome do tópico
+		return nil, err
+	}
 
 	return updatedOrder, nil
 }

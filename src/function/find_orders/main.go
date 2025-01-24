@@ -27,16 +27,16 @@ func main() {
 	defer cancel()
 
 	clientOptions := options.Client().ApplyURI(os.Getenv("DB_URI"))
-	client, err := mongo.Connect(ctx, clientOptions)
+	dbClient, err := mongo.Connect(ctx, clientOptions)
 	if err != nil {
 		zap.L().Fatal("unable to connect on database", zap.Error(err))
 	}
 
-	database := client.Database(os.Getenv("DB_NAME"))
+	database := dbClient.Database(os.Getenv("DB_NAME"))
 	ordersCollection := database.Collection("orders")
 
 	orderRepository := mongodb_repository.NewOrderRepository(ordersCollection)
-	orderService := order_service.NewOrderService(orderRepository)
+	orderService := order_service.NewOrderService(orderRepository, nil)
 	handler := NewHandler(orderService)
 
 	lambda.Start(handler.Handle)
