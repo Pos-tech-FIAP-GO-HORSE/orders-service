@@ -1,4 +1,4 @@
-package main
+package handler
 
 import (
 	"context"
@@ -7,6 +7,7 @@ import (
 
 	"github.com/Pos-tech-FIAP-GO-HORSE/orders-service/src/core/service/order_service"
 	"github.com/Pos-tech-FIAP-GO-HORSE/orders-service/src/function"
+	"github.com/Pos-tech-FIAP-GO-HORSE/orders-service/src/function/update_order_status/contract"
 	"github.com/aws/aws-lambda-go/events"
 )
 
@@ -30,7 +31,19 @@ func (ref *Handler) Handle(ctx context.Context, req events.APIGatewayProxyReques
 		}, nil
 	}
 
-	order, err := ref.orderService.FindByID(ctx, orderID)
+	var orderRequest contract.UpdateOrderRequest
+
+	if err := json.Unmarshal([]byte(req.Body), &orderRequest); err != nil {
+		return events.APIGatewayProxyResponse{
+			StatusCode: http.StatusBadRequest,
+			Headers: map[string]string{
+				"Content-Type": "application-json",
+			},
+			Body: err.Error(),
+		}, nil
+	}
+
+	updatedOrder, err := ref.orderService.UpdateStatusByID(ctx, orderID, orderRequest.Status)
 	if err != nil {
 		return events.APIGatewayProxyResponse{
 			StatusCode: http.StatusInternalServerError, // TODO: alterar para pegar o status code dinamicamente conforme o retorno da camada de negócios
@@ -41,11 +54,11 @@ func (ref *Handler) Handle(ctx context.Context, req events.APIGatewayProxyReques
 		}, nil
 	}
 
-	response := OrderFromDomain(*order)
+	response := contract.UpdateOrderResponseFromDomain(updatedOrder)
 	rawResponse, _ := json.Marshal(response)
 
 	return events.APIGatewayProxyResponse{
-		StatusCode: http.StatusOK,
+		StatusCode: http.StatusCreated,
 		Headers: map[string]string{
 			"Content-Type": "application-json",
 		},

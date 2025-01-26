@@ -1,4 +1,4 @@
-package main
+package contract
 
 import (
 	"time"
@@ -6,7 +6,11 @@ import (
 	"github.com/Pos-tech-FIAP-GO-HORSE/orders-service/src/core/domain/entity"
 )
 
-type Order struct {
+type UpdateOrderRequest struct {
+	Status string `json:"status"`
+}
+
+type UpdateOrderResponse struct {
 	ID                       string    `json:"id"`
 	Items                    []Item    `json:"items"`
 	TotalPrice               float64   `json:"totalPrice"`
@@ -38,14 +42,14 @@ func (ref Item) ToDomain() entity.Item {
 	}
 }
 
-func OrderFromDomain(order entity.Order) Order {
+func UpdateOrderResponseFromDomain(order *entity.Order) UpdateOrderResponse {
 	items := make([]Item, len(order.Items))
 
 	for i, item := range order.Items {
 		items[i] = ItemFromDomain(item)
 	}
 
-	return Order{
+	return UpdateOrderResponse{
 		ID:                       order.ID,
 		Items:                    items,
 		TotalPrice:               order.TotalPrice,

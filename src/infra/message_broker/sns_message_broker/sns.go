@@ -16,9 +16,9 @@ func NewSNSMessageBroker(client *sns.Client) message_broker.IMessageBroker {
 	return &SNSMessageBroker{client}
 }
 
-func (ref *SNSMessageBroker) Publish(ctx context.Context, topicArn, message string) error {
+func (ref *SNSMessageBroker) Publish(ctx context.Context, topic, message string) error {
 	publishInput := sns.PublishInput{
-		TopicArn: aws.String(topicArn),
+		TopicArn: aws.String(topic),
 		Message:  aws.String(message),
 	}
 
@@ -30,9 +30,9 @@ func (ref *SNSMessageBroker) Publish(ctx context.Context, topicArn, message stri
 	return nil
 }
 
-func (ref *SNSMessageBroker) Subscribe(ctx context.Context, topicArn, protocol string) (string, error) {
+func (ref *SNSMessageBroker) Subscribe(ctx context.Context, topic, protocol string) (string, error) {
 	subscribeInput := &sns.SubscribeInput{
-		TopicArn: aws.String(topicArn),
+		TopicArn: aws.String(topic),
 		Protocol: aws.String(protocol),
 	}
 

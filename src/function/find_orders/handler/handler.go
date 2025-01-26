@@ -1,4 +1,4 @@
-package main
+package handler
 
 import (
 	"context"
@@ -7,6 +7,7 @@ import (
 
 	"github.com/Pos-tech-FIAP-GO-HORSE/orders-service/src/core/service/order_service"
 	"github.com/Pos-tech-FIAP-GO-HORSE/orders-service/src/function"
+	"github.com/Pos-tech-FIAP-GO-HORSE/orders-service/src/function/find_orders/contract"
 	"github.com/aws/aws-lambda-go/events"
 )
 
@@ -30,7 +31,7 @@ func (ref *Handler) Handle(ctx context.Context, req events.APIGatewayProxyReques
 		}, nil
 	}
 
-	response := OrdersFromDomain(orders)
+	response := contract.OrdersFromDomain(orders)
 	rawResponse, _ := json.Marshal(response)
 
 	return events.APIGatewayProxyResponse{
