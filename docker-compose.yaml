@@ -15,7 +15,7 @@ services:
     container_name: local-aws-services
     image: localstack/localstack:latest
     environment:
-      - SERVICES=sns
+      - SERVICES=sns,lambda
       - AWS_DEFAULT_REGION=us-east-1
       - EDGE_PORT=4566
     ports:

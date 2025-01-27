@@ -1,4 +1,4 @@
-package main
+package handler
 
 import (
 	"context"
@@ -7,6 +7,7 @@ import (
 
 	"github.com/Pos-tech-FIAP-GO-HORSE/orders-service/src/core/service/order_service"
 	"github.com/Pos-tech-FIAP-GO-HORSE/orders-service/src/function"
+	"github.com/Pos-tech-FIAP-GO-HORSE/orders-service/src/function/create_order/contract"
 	"github.com/aws/aws-lambda-go/events"
 )
 
@@ -19,18 +20,7 @@ func NewHandler(orderService order_service.IOrderService) function.IHandler {
 }
 
 func (ref *Handler) Handle(ctx context.Context, req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	orderID, ok := req.PathParameters["id"]
-	if !ok {
-		return events.APIGatewayProxyResponse{
-			StatusCode: http.StatusBadRequest,
-			Headers: map[string]string{
-				"Content-Type": "application-json",
-			},
-			Body: "id path parameter missing",
-		}, nil
-	}
-
-	var orderRequest UpdateOrderRequest
+	var orderRequest contract.CreateOrderRequest
 
 	if err := json.Unmarshal([]byte(req.Body), &orderRequest); err != nil {
 		return events.APIGatewayProxyResponse{
@@ -44,7 +34,7 @@ func (ref *Handler) Handle(ctx context.Context, req events.APIGatewayProxyReques
 
 	order := orderRequest.ToDomain()
 
-	updatedOrder, err := ref.orderService.UpdateByID(ctx, orderID, order)
+	createdOrder, err := ref.orderService.Create(ctx, order)
 	if err != nil {
 		return events.APIGatewayProxyResponse{
 			StatusCode: http.StatusInternalServerError, // TODO: alterar para pegar o status code dinamicamente conforme o retorno da camada de negócios
@@ -55,7 +45,7 @@ func (ref *Handler) Handle(ctx context.Context, req events.APIGatewayProxyReques
 		}, nil
 	}
 
-	response := UpdateOrderResponseFromDomain(updatedOrder)
+	response := contract.CreateOrderResponseFromDomain(createdOrder)
 	rawResponse, _ := json.Marshal(response)
 
 	return events.APIGatewayProxyResponse{

@@ -8,17 +8,20 @@ import (
 	values "github.com/Pos-tech-FIAP-GO-HORSE/orders-service/src/core/domain/value_object"
 	"github.com/Pos-tech-FIAP-GO-HORSE/orders-service/src/infra/message_broker"
 	"github.com/Pos-tech-FIAP-GO-HORSE/orders-service/src/infra/repository"
+	"go.uber.org/zap"
 )
 
 type OrderService struct {
 	orderRepository repository.IOrderRepository
 	messageBroker   message_broker.IMessageBroker
+	topics          map[string]string
 }
 
-func NewOrderService(orderRepository repository.IOrderRepository, messageBroker message_broker.IMessageBroker) IOrderService {
+func NewOrderService(orderRepository repository.IOrderRepository, messageBroker message_broker.IMessageBroker, topics map[string]string) IOrderService {
 	return &OrderService{
 		orderRepository,
 		messageBroker,
+		topics,
 	}
 }
 
@@ -32,10 +35,14 @@ func (ref *OrderService) Create(ctx context.Context, order entity.Order) (*entit
 		return nil, err
 	}
 
+	zap.L().Info("order created", zap.Any("order", createdOrder))
+
 	messageRaw, _ := json.Marshal(createdOrder)
-	if err = ref.messageBroker.Publish(ctx, "", string(messageRaw)); err != nil { // TODO: adicionar nome do tópico
+	if err = ref.messageBroker.Publish(ctx, ref.topics["order-created"], string(messageRaw)); err != nil {
 		return nil, err
 	}
+
+	zap.L().Info("message sent to broker", zap.String("message", string(messageRaw)))
 
 	return createdOrder, nil
 }
@@ -57,10 +64,14 @@ func (ref *OrderService) UpdateByID(ctx context.Context, id string, order entity
 		return nil, err
 	}
 
+	zap.L().Info("order updated", zap.Any("order", updatedOrder))
+
 	messageRaw, _ := json.Marshal(updatedOrder)
-	if err = ref.messageBroker.Publish(ctx, "", string(messageRaw)); err != nil { // TODO: adicionar nome do tópico
+	if err = ref.messageBroker.Publish(ctx, ref.topics["order-updated"], string(messageRaw)); err != nil {
 		return nil, err
 	}
+
+	zap.L().Info("message sent to broker", zap.String("message", string(messageRaw)))
 
 	return updatedOrder, nil
 }
@@ -71,10 +82,14 @@ func (ref *OrderService) UpdateStatusByID(ctx context.Context, id, status string
 		return nil, err
 	}
 
+	zap.L().Info("order updated", zap.Any("order", updatedOrder))
+
 	messageRaw, _ := json.Marshal(updatedOrder)
-	if err = ref.messageBroker.Publish(ctx, "", string(messageRaw)); err != nil { // TODO: adicionar nome do tópico
+	if err = ref.messageBroker.Publish(ctx, ref.topics["order-updated"], string(messageRaw)); err != nil {
 		return nil, err
 	}
+
+	zap.L().Info("message sent to broker", zap.String("message", string(messageRaw)))
 
 	return updatedOrder, nil
 }

@@ -17,11 +17,11 @@ type Order struct {
 }
 
 type Item struct {
-	ID              string
-	Name            string
-	ImageURL        string
-	Price           float64
-	PreparationTime int64
-	Quantity        int64
-	Comments        string
+	ID              string  `json:"id"`
+	Name            string  `json:"name"`
+	ImageURL        string  `json:"imageURL"`
+	Price           float64 `json:"price"`
+	PreparationTime int64   `json:"preparationTime"`
+	Quantity        int64   `json:"quantity"`
+	Comments        string  `json:"comments"`
 }
