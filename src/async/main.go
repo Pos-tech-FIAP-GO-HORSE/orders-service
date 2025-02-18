@@ -42,11 +42,7 @@ func main() {
 	ordersCollection := database.Collection("orders")
 	productsCollection := database.Collection("products")
 
-	cfg, err := config.LoadDefaultConfig(
-		ctx,
-		config.WithRegion("us-east-1"),
-		config.WithBaseEndpoint(os.Getenv("SNS_URL")),
-	)
+	cfg, err := config.LoadDefaultConfig(ctx)
 	if err != nil {
 		zap.L().Fatal("unable to load aws config", zap.Error(err))
 	}
