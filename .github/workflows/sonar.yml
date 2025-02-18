@@ -51,4 +51,4 @@ jobs:
             -Dsonar.projectKey=Pos-tech-FIAP-GO-HORSE_orders-service
             -Dsonar.sources=src
             -Dsonar.go.coverage.reportPaths=coverage.out
-            -Dsonar.exclusions=src/core/mocks,src/infra/mocks
+            -Dsonar.exclusions="**/src/core/mocks/**,**/src/infra/mocks/**"
