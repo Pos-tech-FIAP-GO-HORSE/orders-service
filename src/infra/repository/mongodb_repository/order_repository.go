@@ -7,6 +7,7 @@ import (
 	"github.com/Pos-tech-FIAP-GO-HORSE/orders-service/src/core/domain/entity"
 	"github.com/Pos-tech-FIAP-GO-HORSE/orders-service/src/infra/repository"
 	"github.com/Pos-tech-FIAP-GO-HORSE/orders-service/src/infra/repository/mongodb_repository/models"
+	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -22,6 +23,7 @@ func NewOrderRepository(collection *mongo.Collection) repository.IOrderRepositor
 
 func (ref *OrderRepository) Create(ctx context.Context, order entity.Order) (*entity.Order, error) {
 	record := models.OrderFromDomain(order)
+	record.PublicID = uuid.NewString()
 
 	now := time.Now()
 	record.CreatedAt = now
@@ -69,6 +71,19 @@ func (ref *OrderRepository) FindByID(ctx context.Context, id string) (*entity.Or
 
 	var record models.Order
 	if err = result.Decode(&record); err != nil {
+		return nil, err
+	}
+
+	order := record.ToDomain()
+
+	return &order, nil
+}
+
+func (ref *OrderRepository) FindByPublicID(ctx context.Context, publicID string) (*entity.Order, error) {
+	result := ref.collection.FindOne(ctx, bson.M{"public_id": publicID})
+
+	var record models.Order
+	if err := result.Decode(&record); err != nil {
 		return nil, err
 	}
 

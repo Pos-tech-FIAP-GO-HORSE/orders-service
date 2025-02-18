@@ -72,6 +72,19 @@ func (ref *ProductRepository) FindByID(ctx context.Context, id string) (*entity.
 	return &product, nil
 }
 
+func (ref *ProductRepository) FindByPublicID(ctx context.Context, publicID string) (*entity.Product, error) {
+	result := ref.collection.FindOne(ctx, bson.M{"public_id": publicID})
+
+	var record models.Product
+	if err := result.Decode(&record); err != nil {
+		return nil, err
+	}
+
+	product := record.ToDomain()
+
+	return &product, nil
+}
+
 func (ref *ProductRepository) UpdateByID(ctx context.Context, id string, product entity.Product) (*entity.Product, error) {
 	objectID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
@@ -86,4 +99,29 @@ func (ref *ProductRepository) UpdateByID(ctx context.Context, id string, product
 	}
 
 	return ref.FindByID(ctx, id)
+}
+
+func (ref *ProductRepository) DeleteByID(ctx context.Context, id string) (*entity.Product, error) {
+	objectID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return nil, err
+	}
+
+	filter := bson.M{"_id": objectID}
+
+	result := ref.collection.FindOne(ctx, filter)
+
+	var record models.Product
+	if err := result.Decode(&record); err != nil {
+		return nil, err
+	}
+
+	product := record.ToDomain()
+
+	_, err = ref.collection.DeleteOne(ctx, filter)
+	if err != nil {
+		return nil, err
+	}
+
+	return &product, nil
 }

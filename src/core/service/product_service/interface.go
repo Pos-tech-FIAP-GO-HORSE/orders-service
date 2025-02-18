@@ -10,5 +10,7 @@ type IProductService interface {
 	Create(ctx context.Context, product entity.Product) (*entity.Product, error)
 	Find(ctx context.Context) ([]*entity.Product, error)
 	FindByID(ctx context.Context, id string) (*entity.Product, error)
+	FindByPublicID(ctx context.Context, publicID string) (*entity.Product, error)
 	UpdateByID(ctx context.Context, id string, product entity.Product) (*entity.Product, error)
+	DeleteByID(ctx context.Context, id string) (*entity.Product, error)
 }

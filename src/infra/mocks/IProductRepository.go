@@ -44,6 +44,36 @@ func (_m *IProductRepository) Create(ctx context.Context, product entity.Product
 	return r0, r1
 }
 
+// DeleteByID provides a mock function with given fields: ctx, id
+func (_m *IProductRepository) DeleteByID(ctx context.Context, id string) (*entity.Product, error) {
+	ret := _m.Called(ctx, id)
+
+	if len(ret) == 0 {
+		panic("no return value specified for DeleteByID")
+	}
+
+	var r0 *entity.Product
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, string) (*entity.Product, error)); ok {
+		return rf(ctx, id)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, string) *entity.Product); ok {
+		r0 = rf(ctx, id)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*entity.Product)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
+		r1 = rf(ctx, id)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // Find provides a mock function with given fields: ctx
 func (_m *IProductRepository) Find(ctx context.Context) ([]*entity.Product, error) {
 	ret := _m.Called(ctx)
@@ -97,6 +127,36 @@ func (_m *IProductRepository) FindByID(ctx context.Context, id string) (*entity.
 
 	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
 		r1 = rf(ctx, id)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// FindByPublicID provides a mock function with given fields: ctx, publicID
+func (_m *IProductRepository) FindByPublicID(ctx context.Context, publicID string) (*entity.Product, error) {
+	ret := _m.Called(ctx, publicID)
+
+	if len(ret) == 0 {
+		panic("no return value specified for FindByPublicID")
+	}
+
+	var r0 *entity.Product
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, string) (*entity.Product, error)); ok {
+		return rf(ctx, publicID)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, string) *entity.Product); ok {
+		r0 = rf(ctx, publicID)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*entity.Product)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
+		r1 = rf(ctx, publicID)
 	} else {
 		r1 = ret.Error(1)
 	}

@@ -10,6 +10,7 @@ type IOrderRepository interface {
 	Create(ctx context.Context, order entity.Order) (*entity.Order, error)
 	Find(ctx context.Context) ([]*entity.Order, error)
 	FindByID(ctx context.Context, id string) (*entity.Order, error)
+	FindByPublicID(ctx context.Context, publicID string) (*entity.Order, error)
 	UpdateByID(ctx context.Context, id string, order entity.Order) (*entity.Order, error)
 	UpdateStatusByID(ctx context.Context, id, status string) (*entity.Order, error)
 }
@@ -18,5 +19,7 @@ type IProductRepository interface {
 	Create(ctx context.Context, product entity.Product) (*entity.Product, error)
 	Find(ctx context.Context) ([]*entity.Product, error)
 	FindByID(ctx context.Context, id string) (*entity.Product, error)
+	FindByPublicID(ctx context.Context, publicID string) (*entity.Product, error)
 	UpdateByID(ctx context.Context, id string, product entity.Product) (*entity.Product, error)
+	DeleteByID(ctx context.Context, id string) (*entity.Product, error)
 }

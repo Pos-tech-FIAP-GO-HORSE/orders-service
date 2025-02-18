@@ -9,6 +9,7 @@ import (
 
 type Order struct {
 	ID                       string    `bson:"_id,omitempty"`
+	PublicID                 string    `bson:"publicId,omitempty"`
 	Items                    []Item    `bson:"items,omitempty"`
 	TotalPrice               float64   `bson:"totalPrice,omitempty"`
 	Status                   string    `bson:"status,omitempty"`
@@ -19,6 +20,7 @@ type Order struct {
 
 type Item struct {
 	ID              string  `bson:"id"`
+	PublicID        string  `bson:"publicId,omitempty"`
 	Name            string  `bson:"name,omitempty"`
 	ImageURL        string  `bson:"imageUrl,omitempty"`
 	Price           float64 `bson:"price,omitempty"`
@@ -36,6 +38,7 @@ func OrderFromDomain(order entity.Order) Order {
 
 	return Order{
 		ID:                       order.ID,
+		PublicID:                 order.PublicID,
 		Items:                    items,
 		TotalPrice:               order.TotalPrice,
 		Status:                   string(order.Status),
@@ -46,6 +49,7 @@ func OrderFromDomain(order entity.Order) Order {
 func ItemFromDomain(item entity.Item) Item {
 	return Item{
 		ID:              item.ID,
+		PublicID:        item.PublicID,
 		Name:            item.Name,
 		ImageURL:        item.ImageURL,
 		Price:           item.Price,
@@ -58,6 +62,7 @@ func ItemFromDomain(item entity.Item) Item {
 func (ref Item) ToDomain() entity.Item {
 	return entity.Item{
 		ID:              ref.ID,
+		PublicID:        ref.PublicID,
 		Name:            ref.Name,
 		ImageURL:        ref.ImageURL,
 		Price:           ref.Price,
@@ -76,6 +81,7 @@ func (ref Order) ToDomain() entity.Order {
 
 	return entity.Order{
 		ID:                       ref.ID,
+		PublicID:                 ref.PublicID,
 		Items:                    items,
 		TotalPrice:               ref.TotalPrice,
 		Status:                   values.OrderStatusType(ref.Status),
