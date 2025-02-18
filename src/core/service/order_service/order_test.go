@@ -174,7 +174,7 @@ func TestFindByID(t *testing.T) {
 		UpdatedAt:                time.Now(),
 	}
 
-	t.Run("should find orders successfully", func(t *testing.T) {
+	t.Run("should find order successfully", func(t *testing.T) {
 		orderRepositoryMocked := mocks.NewIOrderRepository(t)
 		orderRepositoryMocked.On("FindByID", ctx, "id").Return(order, nil)
 
@@ -183,6 +183,44 @@ func TestFindByID(t *testing.T) {
 		}
 
 		actual, err := service.FindByID(ctx, "id")
+		assert.Equal(t, order, actual)
+		assert.Nil(t, err)
+	})
+}
+
+func TestFindByPublicID(t *testing.T) {
+	ctx := context.TODO()
+
+	order := &entity.Order{
+		ID:       uuid.NewString(),
+		PublicID: uuid.NewString(),
+		Status:   values.TypeAwaitingPayment,
+		Items: []entity.Item{
+			{
+				ID:              uuid.NewString(),
+				Name:            "Batata frita",
+				ImageURL:        "batata_frita.png",
+				Price:           4.99,
+				PreparationTime: 3,
+				Quantity:        1,
+				Comments:        "",
+			},
+		},
+		TotalPrice:               4.99,
+		EstimatedPreparationTime: 3,
+		CreatedAt:                time.Now(),
+		UpdatedAt:                time.Now(),
+	}
+
+	t.Run("should find order successfully", func(t *testing.T) {
+		orderRepositoryMocked := mocks.NewIOrderRepository(t)
+		orderRepositoryMocked.On("FindByPublicID", ctx, order.PublicID).Return(order, nil)
+
+		service := OrderService{
+			orderRepository: orderRepositoryMocked,
+		}
+
+		actual, err := service.FindByPublicID(ctx, order.PublicID)
 		assert.Equal(t, order, actual)
 		assert.Nil(t, err)
 	})

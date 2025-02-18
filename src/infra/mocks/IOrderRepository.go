@@ -104,6 +104,36 @@ func (_m *IOrderRepository) FindByID(ctx context.Context, id string) (*entity.Or
 	return r0, r1
 }
 
+// FindByPublicID provides a mock function with given fields: ctx, publicID
+func (_m *IOrderRepository) FindByPublicID(ctx context.Context, publicID string) (*entity.Order, error) {
+	ret := _m.Called(ctx, publicID)
+
+	if len(ret) == 0 {
+		panic("no return value specified for FindByPublicID")
+	}
+
+	var r0 *entity.Order
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, string) (*entity.Order, error)); ok {
+		return rf(ctx, publicID)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, string) *entity.Order); ok {
+		r0 = rf(ctx, publicID)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*entity.Order)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
+		r1 = rf(ctx, publicID)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // UpdateByID provides a mock function with given fields: ctx, id, order
 func (_m *IOrderRepository) UpdateByID(ctx context.Context, id string, order entity.Order) (*entity.Order, error) {
 	ret := _m.Called(ctx, id, order)

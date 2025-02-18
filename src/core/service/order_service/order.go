@@ -55,6 +55,10 @@ func (ref *OrderService) FindByID(ctx context.Context, id string) (*entity.Order
 	return ref.orderRepository.FindByID(ctx, id)
 }
 
+func (ref *OrderService) FindByPublicID(ctx context.Context, publicID string) (*entity.Order, error) {
+	return ref.orderRepository.FindByPublicID(ctx, publicID)
+}
+
 func (ref *OrderService) UpdateByID(ctx context.Context, id string, order entity.Order) (*entity.Order, error) {
 	order.TotalPrice = ref.getTotalPrice(order.Items)
 	order.EstimatedPreparationTime = ref.getEstimatedPreparationTime(order.Items)

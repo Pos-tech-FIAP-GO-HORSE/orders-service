@@ -5,14 +5,14 @@ import (
 	"os"
 	"time"
 
+	"github.com/Pos-tech-FIAP-GO-HORSE/orders-service/src/async/handler"
 	"github.com/Pos-tech-FIAP-GO-HORSE/orders-service/src/core/service/order_service"
-	"github.com/Pos-tech-FIAP-GO-HORSE/orders-service/src/function/update_order/handler"
+	"github.com/Pos-tech-FIAP-GO-HORSE/orders-service/src/core/service/product_service"
 	"github.com/Pos-tech-FIAP-GO-HORSE/orders-service/src/infra/message_broker/sns_message_broker"
 	"github.com/Pos-tech-FIAP-GO-HORSE/orders-service/src/infra/repository/mongodb_repository"
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/sns"
-	_ "github.com/joho/godotenv/autoload"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.uber.org/zap"
@@ -40,6 +40,7 @@ func main() {
 
 	database := dbClient.Database(os.Getenv("DB_NAME"))
 	ordersCollection := database.Collection("orders")
+	productsCollection := database.Collection("products")
 
 	cfg, err := config.LoadDefaultConfig(
 		ctx,
@@ -51,14 +52,19 @@ func main() {
 	}
 
 	topics := map[string]string{
-		"order-updated": os.Getenv("TOPIC_ORDER_UPDATED"),
+		"order-created": os.Getenv("TOPIC_ORDER_CREATED"),
+		"order_updated": os.Getenv("TOPIC_ORDER_UPDATED"),
 	}
 
 	snsClient := sns_message_broker.NewSNSMessageBroker(sns.NewFromConfig(cfg))
 
 	orderRepository := mongodb_repository.NewOrderRepository(ordersCollection)
+	productRepository := mongodb_repository.NewProductRepository(productsCollection)
+
 	orderService := order_service.NewOrderService(orderRepository, snsClient, topics)
-	handler := handler.NewHandler(orderService)
+	productService := product_service.NewProductService(productRepository)
+
+	handler := handler.NewHandler(orderService, productService)
 
 	lambda.Start(handler.Handle)
 }

@@ -27,6 +27,14 @@ func (ref *ProductService) FindByID(ctx context.Context, id string) (*entity.Pro
 	return ref.productRepository.FindByID(ctx, id)
 }
 
+func (ref *ProductService) FindByPublicID(ctx context.Context, publicID string) (*entity.Product, error) {
+	return ref.productRepository.FindByPublicID(ctx, publicID)
+}
+
 func (ref *ProductService) UpdateByID(ctx context.Context, id string, product entity.Product) (*entity.Product, error) {
 	return ref.productRepository.UpdateByID(ctx, id, product)
+}
+
+func (ref *ProductService) DeleteByID(ctx context.Context, id string) (*entity.Product, error) {
+	return ref.productRepository.DeleteByID(ctx, id)
 }

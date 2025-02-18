@@ -12,22 +12,13 @@ type UpdateOrderRequest struct {
 
 type UpdateOrderResponse struct {
 	ID                       string    `json:"id"`
+	PublicID                 string    `json:"public_id"`
 	Items                    []Item    `json:"items"`
-	TotalPrice               float64   `json:"totalPrice"`
+	TotalPrice               float64   `json:"total_price"`
 	Status                   string    `json:"status"`
-	EstimatedPreparationTime int64     `json:"estimatedPreparationTime"`
-	CreatedAt                time.Time `json:"createdAt"`
-	UpdatedAt                time.Time `json:"updatedAt"`
-}
-
-type Item struct {
-	ID              string  `json:"id"`
-	Name            string  `json:"name"`
-	ImageURL        string  `json:"imageUrl"`
-	Price           float64 `json:"price"`
-	Quantity        int64   `json:"quantity"`
-	PreparationTime int64   `json:"preparationTime"`
-	Comments        string  `json:"comments"`
+	EstimatedPreparationTime int64     `json:"estimated_preparation_time"`
+	CreatedAt                time.Time `json:"created_at"`
+	UpdatedAt                time.Time `json:"updated_at"`
 }
 
 func (ref UpdateOrderRequest) ToDomain() entity.Order {
@@ -42,18 +33,6 @@ func (ref UpdateOrderRequest) ToDomain() entity.Order {
 	}
 }
 
-func (ref Item) ToDomain() entity.Item {
-	return entity.Item{
-		ID:              ref.ID,
-		Name:            ref.Name,
-		ImageURL:        ref.ImageURL,
-		Price:           ref.Price,
-		PreparationTime: ref.PreparationTime,
-		Quantity:        ref.Quantity,
-		Comments:        ref.Comments,
-	}
-}
-
 func UpdateOrderResponseFromDomain(order *entity.Order) UpdateOrderResponse {
 	items := make([]Item, len(order.Items))
 
@@ -63,20 +42,12 @@ func UpdateOrderResponseFromDomain(order *entity.Order) UpdateOrderResponse {
 
 	return UpdateOrderResponse{
 		ID:                       order.ID,
+		PublicID:                 order.PublicID,
 		Items:                    items,
 		TotalPrice:               order.TotalPrice,
 		Status:                   string(order.Status),
 		EstimatedPreparationTime: order.EstimatedPreparationTime,
 		CreatedAt:                order.CreatedAt,
 		UpdatedAt:                order.UpdatedAt,
-	}
-}
-
-func ItemFromDomain(item entity.Item) Item {
-	return Item{
-		ID:       item.ID,
-		Price:    item.Price,
-		Quantity: item.Quantity,
-		Comments: item.Comments,
 	}
 }

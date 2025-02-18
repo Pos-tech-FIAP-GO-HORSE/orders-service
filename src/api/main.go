@@ -5,8 +5,8 @@ import (
 	"os"
 	"time"
 
+	"github.com/Pos-tech-FIAP-GO-HORSE/orders-service/src/api/handler"
 	"github.com/Pos-tech-FIAP-GO-HORSE/orders-service/src/core/service/order_service"
-	"github.com/Pos-tech-FIAP-GO-HORSE/orders-service/src/function/update_order_status/handler"
 	"github.com/Pos-tech-FIAP-GO-HORSE/orders-service/src/infra/message_broker/sns_message_broker"
 	"github.com/Pos-tech-FIAP-GO-HORSE/orders-service/src/infra/repository/mongodb_repository"
 	"github.com/aws/aws-lambda-go/lambda"
@@ -51,7 +51,8 @@ func main() {
 	}
 
 	topics := map[string]string{
-		"order-updated": os.Getenv("TOPIC_ORDER_UPDATED"),
+		"order-created": "arn:aws:sns:us-east-1:537124948968:orders-event-order-created",
+		"order-updated": "arn:aws:sns:us-east-1:537124948968:orders-event-order-updated",
 	}
 
 	snsClient := sns_message_broker.NewSNSMessageBroker(sns.NewFromConfig(cfg))
