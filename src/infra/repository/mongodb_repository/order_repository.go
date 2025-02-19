@@ -80,7 +80,7 @@ func (ref *OrderRepository) FindByID(ctx context.Context, id string) (*entity.Or
 }
 
 func (ref *OrderRepository) FindByPublicID(ctx context.Context, publicID string) (*entity.Order, error) {
-	result := ref.collection.FindOne(ctx, bson.M{"public_id": publicID})
+	result := ref.collection.FindOne(ctx, bson.M{"publicId": publicID})
 
 	var record models.Order
 	if err := result.Decode(&record); err != nil {
