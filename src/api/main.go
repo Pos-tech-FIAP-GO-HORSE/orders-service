@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"log"
+	"net/http"
 	"os"
 	"time"
 
@@ -9,7 +11,7 @@ import (
 	"github.com/Pos-tech-FIAP-GO-HORSE/orders-service/src/core/service/order_service"
 	"github.com/Pos-tech-FIAP-GO-HORSE/orders-service/src/infra/message_broker/sns_message_broker"
 	"github.com/Pos-tech-FIAP-GO-HORSE/orders-service/src/infra/repository/mongodb_repository"
-	"github.com/aws/aws-lambda-go/lambda"
+	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/sns"
 	_ "github.com/joho/godotenv/autoload"
@@ -57,5 +59,16 @@ func main() {
 	orderService := order_service.NewOrderService(orderRepository, snsClient, topics)
 	handler := handler.NewHandler(orderService)
 
-	lambda.Start(handler.Handle)
+	// lambda.Start(handler.Handle)
+
+	response, err := handler.Handle(ctx, events.APIGatewayProxyRequest{
+		HTTPMethod: http.MethodPost,
+		Body:       "{\"items\":[{\"name\":\"teste\",\"image_url\":\"image.png\",\"price\":10,\"quantity\":1,\"preparation_time\":2,\"comments\":\"\"}]}",
+	})
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	log.Println(response)
 }

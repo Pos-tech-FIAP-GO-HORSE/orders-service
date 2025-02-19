@@ -25,6 +25,12 @@ func NewOrderService(orderRepository repository.IOrderRepository, messageBroker 
 	}
 }
 
+type Message struct {
+	Amount   float64 `json:"amount"`
+	OrderID  string  `json:"order_id"`
+	PublicID string  `json:"public_id"`
+}
+
 func (ref *OrderService) Create(ctx context.Context, order entity.Order) (*entity.Order, error) {
 	order.TotalPrice = ref.getTotalPrice(order.Items)
 	order.EstimatedPreparationTime = ref.getEstimatedPreparationTime(order.Items)
@@ -35,9 +41,15 @@ func (ref *OrderService) Create(ctx context.Context, order entity.Order) (*entit
 		return nil, err
 	}
 
+	message := Message{
+		Amount:   createdOrder.TotalPrice,
+		OrderID:  createdOrder.ID,
+		PublicID: createdOrder.PublicID,
+	}
+
 	zap.L().Info("order created", zap.Any("order", createdOrder))
 
-	messageRaw, _ := json.Marshal(createdOrder)
+	messageRaw, _ := json.Marshal(message)
 	if err = ref.messageBroker.Publish(ctx, ref.topics["order-created"], string(messageRaw)); err != nil {
 		return nil, err
 	}
