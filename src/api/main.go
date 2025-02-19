@@ -41,18 +41,14 @@ func main() {
 	database := dbClient.Database(os.Getenv("DB_NAME"))
 	ordersCollection := database.Collection("orders")
 
-	cfg, err := config.LoadDefaultConfig(
-		ctx,
-		config.WithRegion("us-east-1"),
-		config.WithBaseEndpoint(os.Getenv("SNS_URL")),
-	)
+	cfg, err := config.LoadDefaultConfig(ctx)
 	if err != nil {
 		zap.L().Fatal("unable to load aws config", zap.Error(err))
 	}
 
 	topics := map[string]string{
-		"order-created": "arn:aws:sns:us-east-1:537124948968:orders-event-order-created",
-		"order-updated": "arn:aws:sns:us-east-1:537124948968:orders-event-order-updated",
+		"order-created": os.Getenv("TOPIC_ORDER_CREATED"),
+		"order_updated": os.Getenv("TOPIC_ORDER_UPDATED"),
 	}
 
 	snsClient := sns_message_broker.NewSNSMessageBroker(sns.NewFromConfig(cfg))
